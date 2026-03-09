@@ -313,10 +313,10 @@ export default function App(): JSX.Element {
     <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-3 py-4 sm:px-6 sm:py-6">
       <header>
         <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-          2주 탄력근무 근태 계산기 (개인용 웹앱)
+          2주 탄력근무 근태 계산기
         </h1>
         <p className="mt-1 text-sm text-slate-600">
-          계산은 모두 분(minute) 단위 정수로 처리하며, 화면에는 h:mm 형식으로만 표시합니다.
+          디바이스별로 Data를 저장하며, 필요시 [전체 데이터 초기화]로 용량을 확보하세요.
         </p>
       </header>
 
