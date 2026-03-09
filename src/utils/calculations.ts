@@ -83,7 +83,7 @@ export function recalculateDayRecord(source: DayRecord): {
       clockOutMinutes,
       LUNCH_BREAK_MINUTES,
     );
-    regularMinutes = Math.max(0, workMinutes - claimedOtMinutes);
+    regularMinutes = Math.min(workMinutes, DAILY_REGULAR_MINUTES);
     overtimeMinutes = Math.max(0, workMinutes - DAILY_REGULAR_MINUTES);
     recommendedOtMinutes =
       Math.floor(overtimeMinutes / OVERTIME_APPROVAL_UNIT_MINUTES) *
