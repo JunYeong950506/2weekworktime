@@ -8,7 +8,6 @@ import { createSampleState } from './data/sampleData';
 import { AppState, CreatePeriodPayload, DayRecord, Period } from './types';
 import { recalculatePeriod, recalculateRecords } from './utils/calculations';
 import { createEmptyAppState, deleteCurrentPeriod } from './utils/dataManagement';
-import { buildPeriodCsv, downloadCsv } from './utils/export';
 import {
   buildDefaultPeriodLabel,
   copyRecordsWithNewDate,
@@ -152,10 +151,7 @@ export default function App(): JSX.Element {
 
   function handleCreatePeriod(payload: CreatePeriodPayload): void {
     const label = payload.label.trim() || buildDefaultPeriodLabel(payload.startDate);
-    const id = ensureUniquePeriodId(
-      label,
-      appState.periods.map((period) => period.id),
-    );
+    const id = ensureUniquePeriodId(label, appState.periods.map((period) => period.id));
 
     const sourceRecords = selectedPeriod?.records ?? [];
     const records = copyRecordsWithNewDate(payload.startDate, sourceRecords, payload.copyValues);
@@ -196,22 +192,6 @@ export default function App(): JSX.Element {
     const savedAt = saveAppState(appState);
     setLastSavedAt(savedAt);
     setIsDirty(false);
-  }
-
-  function handleExportCsv(): void {
-    if (!selectedPeriod || !selectedCalc) {
-      return;
-    }
-
-    const csv = buildPeriodCsv(
-      {
-        ...selectedPeriod,
-        records: selectedCalc.records,
-      },
-      selectedCalc.summary,
-    );
-
-    downloadCsv(`${selectedPeriod.id}.csv`, csv);
   }
 
   function handleDeleteCurrentPeriod(): void {
@@ -312,13 +292,9 @@ export default function App(): JSX.Element {
   return (
     <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-3 py-4 sm:px-6 sm:py-6">
       <header>
-        <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
-          2주 탄력근무 근태 계산기
-        </h1>
+        <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">2주 탄력근무 근태 계산기</h1>
         <p className="mt-1 text-sm text-slate-600">
-          데이터가 유실되지 않도록 [저장] 버튼을 누르세요.<br/>
-          디바이스별로 Data를 저장하고 공유되지 않습니다.<br/>
-          필요시 [전체 데이터 초기화]로 용량을 확보하세요.
+          계산은 모두 분(minute) 단위 정수로 처리하며, 화면에는 h:mm 형식으로만 표시합니다.
         </p>
       </header>
 
@@ -335,7 +311,6 @@ export default function App(): JSX.Element {
         onChangeStartDate={handleStartDateChange}
         onCreatePeriod={handleCreatePeriod}
         onSave={handleSave}
-        onExportCsv={handleExportCsv}
         onDeleteCurrentPeriod={handleDeleteCurrentPeriod}
         onResetAllData={handleResetAllData}
       />

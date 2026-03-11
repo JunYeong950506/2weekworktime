@@ -16,7 +16,6 @@ interface PeriodManagerProps {
   onChangeStartDate: (startDate: string) => void;
   onCreatePeriod: (payload: CreatePeriodPayload) => void;
   onSave: () => void;
-  onExportCsv: () => void;
   onDeleteCurrentPeriod: () => void;
   onResetAllData: () => void;
 }
@@ -34,7 +33,6 @@ export default function PeriodManager({
   onChangeStartDate,
   onCreatePeriod,
   onSave,
-  onExportCsv,
   onDeleteCurrentPeriod,
   onResetAllData,
 }: PeriodManagerProps): JSX.Element {
@@ -96,28 +94,26 @@ export default function PeriodManager({
             />
           </label>
 
-          <div className="flex flex-wrap items-end gap-2">
-            <button
-              type="button"
-              onClick={() => setIsCreateOpen((prev) => !prev)}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
-            >
-              새 구간 생성
-            </button>
-            <button
-              type="button"
-              onClick={onSave}
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-500"
-            >
-              저장
-            </button>
-            <button
-              type="button"
-              onClick={onExportCsv}
-              className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-            >
-              엑셀 내보내기(CSV)
-            </button>
+          <div>
+            <div className="flex flex-wrap items-end gap-2">
+              <button
+                type="button"
+                onClick={() => setIsCreateOpen((prev) => !prev)}
+                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+              >
+                새 구간 생성
+              </button>
+              <button
+                type="button"
+                onClick={onSave}
+                className="min-w-[220px] rounded-lg bg-emerald-600 px-6 py-2.5 text-base font-semibold text-white hover:bg-emerald-500"
+              >
+                저장
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-slate-500">
+              저장: 현재 입력 내용을 이 브라우저에 보관하여 새로고침/재접속 후에도 남아있습니다.
+            </p>
           </div>
         </div>
 
