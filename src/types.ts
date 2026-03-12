@@ -5,6 +5,8 @@ export interface DayRecord {
   isHoliday: boolean;
   clockIn: string;
   clockOut: string;
+  dinnerChecked: boolean;
+  nonWorkMinutes: number;
   workMinutes: number | null;
   regularMinutes: number | null;
   overtimeMinutes: number | null;

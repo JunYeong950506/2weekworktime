@@ -55,6 +55,8 @@ export function createRecordsFromStartDate(startDate: string): DayRecord[] {
       isHoliday: isKoreanPublicHoliday(date),
       clockIn: '',
       clockOut: '',
+      dinnerChecked: false,
+      nonWorkMinutes: 0,
       workMinutes: null,
       regularMinutes: null,
       overtimeMinutes: null,
@@ -85,6 +87,8 @@ export function copyRecordsWithNewDate(
       isHoliday: shouldKeepSourceHoliday ? source.isHoliday : record.isHoliday,
       clockIn: source?.clockIn ?? '',
       clockOut: source?.clockOut ?? '',
+      dinnerChecked: source?.dinnerChecked ?? false,
+      nonWorkMinutes: source?.nonWorkMinutes ?? 0,
       claimedOtMinutes: source?.claimedOtMinutes ?? 0,
     };
   });
@@ -106,6 +110,8 @@ export function rebaseRecordDates(
       isHoliday: shouldKeepSourceHoliday ? source.isHoliday : record.isHoliday,
       clockIn: source?.clockIn ?? '',
       clockOut: source?.clockOut ?? '',
+      dinnerChecked: source?.dinnerChecked ?? false,
+      nonWorkMinutes: source?.nonWorkMinutes ?? 0,
       claimedOtMinutes: source?.claimedOtMinutes ?? 0,
     };
   });

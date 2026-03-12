@@ -118,7 +118,7 @@ export default function App(): JSX.Element {
 
   function handlePatchRecord(
     index: number,
-    patch: Partial<Pick<DayRecord, 'isHoliday' | 'clockIn' | 'clockOut' | 'claimedOtMinutes'>>,
+    patch: Partial<Pick<DayRecord, 'isHoliday' | 'clockIn' | 'clockOut' | 'dinnerChecked' | 'nonWorkMinutes' | 'claimedOtMinutes'>>,
   ): void {
     updateSelectedPeriod((period) => {
       const nextRecords = period.records.map((record, rowIndex) =>

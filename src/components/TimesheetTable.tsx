@@ -11,7 +11,17 @@ interface TimesheetTableProps {
   rowMeta: DayRecordMeta[];
   onPatchRecord: (
     index: number,
-    patch: Partial<Pick<DayRecord, 'isHoliday' | 'clockIn' | 'clockOut' | 'claimedOtMinutes'>>,
+    patch: Partial<
+      Pick<
+        DayRecord,
+        | 'isHoliday'
+        | 'clockIn'
+        | 'clockOut'
+        | 'dinnerChecked'
+        | 'nonWorkMinutes'
+        | 'claimedOtMinutes'
+      >
+    >,
   ) => void;
   onSetNow: (index: number, field: TimeField) => void;
 }
@@ -63,7 +73,7 @@ export default function TimesheetTable({
   return (
     <section className="rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-soft">
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[1300px] border-collapse text-sm">
+        <table className="w-full min-w-[1520px] border-collapse text-sm">
           <thead>
             <tr className="bg-slate-800 text-white">
               <th className="px-2 py-2">날짜</th>
@@ -80,6 +90,8 @@ export default function TimesheetTable({
                   HH:mm (24시간)
                 </span>
               </th>
+              <th className="px-2 py-2">석식</th>
+              <th className="px-2 py-2">비업무시간(분)</th>
               <th className="px-2 py-2">근무시간</th>
               <th className="px-2 py-2">정규 업무시간</th>
               <th className="px-2 py-2">추가 근무시간</th>
@@ -143,6 +155,37 @@ export default function TimesheetTable({
                       max="23:59"
                       onChange={(value) => onPatchRecord(index, { clockOut: value })}
                       onClickNow={() => onSetNow(index, 'clockOut')}
+                    />
+                  </td>
+
+                  <td className="px-2 py-2 text-center">
+                    <input
+                      type="checkbox"
+                      checked={record.dinnerChecked}
+                      onChange={(event) =>
+                        onPatchRecord(index, { dinnerChecked: event.target.checked })
+                      }
+                      className="h-4 w-4 rounded border-slate-300"
+                    />
+                  </td>
+
+                  <td className="px-2 py-2 text-center">
+                    <input
+                      type="number"
+                      min={0}
+                      step={1}
+                      value={record.nonWorkMinutes}
+                      onFocus={(event) => {
+                        if (record.nonWorkMinutes === 0) {
+                          event.currentTarget.select();
+                        }
+                      }}
+                      onChange={(event) =>
+                        onPatchRecord(index, {
+                          nonWorkMinutes: Number(event.target.value || 0),
+                        })
+                      }
+                      className="w-28 rounded-md border border-slate-300 bg-sky-50 px-2 py-1 text-right"
                     />
                   </td>
 

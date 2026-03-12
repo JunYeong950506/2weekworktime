@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 
 import { APP_STORAGE_KEY } from '../constants';
-import { AppState, PersistedAppState } from '../types';
+import { AppState, DayRecord, PersistedAppState, Period } from '../types';
 
 const APP_STORAGE_KEYS = [APP_STORAGE_KEY] as const;
 
@@ -9,18 +9,79 @@ function isValidObject(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
 }
 
+function toNullableNumber(value: unknown): number | null {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return null;
+  }
+
+  return value;
+}
+
+function toNonNegativeInteger(value: unknown): number {
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return 0;
+  }
+
+  return Math.max(0, Math.round(value));
+}
+
+function normalizeDayRecord(raw: unknown): DayRecord | null {
+  if (!isValidObject(raw)) {
+    return null;
+  }
+
+  return {
+    date: typeof raw.date === 'string' ? raw.date : '',
+    isHoliday: Boolean(raw.isHoliday),
+    clockIn: typeof raw.clockIn === 'string' ? raw.clockIn : '',
+    clockOut: typeof raw.clockOut === 'string' ? raw.clockOut : '',
+    dinnerChecked:
+      typeof raw.dinnerChecked === 'boolean' ? raw.dinnerChecked : false,
+    nonWorkMinutes: toNonNegativeInteger(raw.nonWorkMinutes),
+    workMinutes: toNullableNumber(raw.workMinutes),
+    regularMinutes: toNullableNumber(raw.regularMinutes),
+    overtimeMinutes: toNullableNumber(raw.overtimeMinutes),
+    recommendedOtMinutes: toNullableNumber(raw.recommendedOtMinutes),
+    claimedOtMinutes: toNonNegativeInteger(raw.claimedOtMinutes),
+    earlyLeaveBalanceMinutes: toNullableNumber(raw.earlyLeaveBalanceMinutes),
+  };
+}
+
+function normalizePeriod(raw: unknown): Period | null {
+  if (!isValidObject(raw)) {
+    return null;
+  }
+
+  if (
+    typeof raw.id !== 'string' ||
+    typeof raw.label !== 'string' ||
+    typeof raw.startDate !== 'string' ||
+    typeof raw.createdAt !== 'string' ||
+    !Array.isArray(raw.records)
+  ) {
+    return null;
+  }
+
+  const records = raw.records
+    .map((record) => normalizeDayRecord(record))
+    .filter((record): record is DayRecord => record !== null);
+
+  return {
+    id: raw.id,
+    label: raw.label,
+    startDate: raw.startDate,
+    createdAt: raw.createdAt,
+    records,
+  };
+}
+
 function parsePersistedState(raw: unknown): PersistedAppState | null {
   if (!isValidObject(raw)) {
     return null;
   }
 
-  const periods = raw.periods;
   const selectedPeriodId = raw.selectedPeriodId;
   const savedAt = raw.savedAt;
-
-  if (!Array.isArray(periods)) {
-    return null;
-  }
 
   if (!(typeof selectedPeriodId === 'string' || selectedPeriodId === null)) {
     return null;
@@ -30,8 +91,16 @@ function parsePersistedState(raw: unknown): PersistedAppState | null {
     return null;
   }
 
+  if (!Array.isArray(raw.periods)) {
+    return null;
+  }
+
+  const periods = raw.periods
+    .map((period) => normalizePeriod(period))
+    .filter((period): period is Period => period !== null);
+
   return {
-    periods: periods as AppState['periods'],
+    periods,
     selectedPeriodId,
     savedAt,
   };

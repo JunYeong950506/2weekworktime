@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 
 import {
   DAILY_REGULAR_MINUTES,
+  DINNER_BREAK_MINUTES,
   LUNCH_BREAK_MINUTES,
   MAX_ADDITIONAL_OVERTIME_MINUTES,
   OVERTIME_APPROVAL_UNIT_MINUTES,
@@ -38,6 +39,7 @@ export function recalculateDayRecord(source: DayRecord): {
   meta: DayRecordMeta;
 } {
   const claimedOtMinutes = sanitizeMinutes(source.claimedOtMinutes);
+  const nonWorkMinutes = sanitizeMinutes(source.nonWorkMinutes);
   const weekday = isWeekday(source.date);
   const validationErrors: string[] = [];
 
@@ -78,18 +80,24 @@ export function recalculateDayRecord(source: DayRecord): {
     clockInMinutes >= CLOCK_IN_MIN_MINUTES;
 
   if (canCalculate) {
+    const dinnerDeductionMinutes = source.dinnerChecked ? DINNER_BREAK_MINUTES : 0;
+    const totalDeductionMinutes =
+      LUNCH_BREAK_MINUTES + dinnerDeductionMinutes + nonWorkMinutes;
+
     workMinutes = computeWorkedMinutes(
       clockInMinutes,
       clockOutMinutes,
-      LUNCH_BREAK_MINUTES,
+      totalDeductionMinutes,
     );
+
     regularMinutes = Math.min(workMinutes, DAILY_REGULAR_MINUTES);
     overtimeMinutes = Math.max(0, workMinutes - DAILY_REGULAR_MINUTES);
     recommendedOtMinutes =
       Math.floor(overtimeMinutes / OVERTIME_APPROVAL_UNIT_MINUTES) *
       OVERTIME_APPROVAL_UNIT_MINUTES;
 
-    const dailyTargetMinutes = weekday && !source.isHoliday ? DAILY_REGULAR_MINUTES : 0;
+    const dailyTargetMinutes =
+      weekday && !source.isHoliday ? DAILY_REGULAR_MINUTES : 0;
     earlyLeaveBalanceMinutes =
       Math.round(workMinutes - dailyTargetMinutes) - claimedOtMinutes;
   }
@@ -98,6 +106,7 @@ export function recalculateDayRecord(source: DayRecord): {
     record: {
       ...source,
       claimedOtMinutes,
+      nonWorkMinutes,
       workMinutes,
       regularMinutes,
       overtimeMinutes,
@@ -145,7 +154,9 @@ export function calculateSummary(
   const requiredMinutes =
     REGULAR_TARGET_MINUTES_2WEEK - weekdayHolidayCount * DAILY_REGULAR_MINUTES;
 
-  const regularWorkedMinutes = sumNullable(records.map((record) => record.regularMinutes));
+  const regularWorkedMinutes = sumNullable(
+    records.map((record) => record.regularMinutes),
+  );
   const remainingMinutes = Math.max(0, requiredMinutes - regularWorkedMinutes);
 
   const earlyLeaveAvailableMinutes = sumNullable(
