@@ -168,6 +168,11 @@ export default function TimesheetTable({
                       min={0}
                       step={1}
                       value={record.claimedOtMinutes}
+                      onFocus={(event) => {
+                        if (record.claimedOtMinutes === 0) {
+                          event.currentTarget.select();
+                        }
+                      }}
                       onChange={(event) =>
                         onPatchRecord(index, {
                           claimedOtMinutes: Number(event.target.value || 0),

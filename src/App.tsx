@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 
 import PeriodManager from './components/PeriodManager';
@@ -71,6 +71,7 @@ export default function App(): JSX.Element {
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(initial.savedAt);
   const [isDirty, setIsDirty] = useState(false);
   const [emptyStartDate, setEmptyStartDate] = useState(dayjs().format('YYYY-MM-DD'));
+  const skipNextAutoSaveRef = useRef(false);
 
   const selectedPeriod = useMemo(
     () => appState.periods.find((period) => period.id === appState.selectedPeriodId) ?? null,
@@ -161,7 +162,8 @@ export default function App(): JSX.Element {
       label,
       startDate: payload.startDate,
       records,
-    });
+    });
+    skipNextAutoSaveRef.current = true;
 
     setAppState((prev) => ({
       selectedPeriodId: period.id,
@@ -188,12 +190,33 @@ export default function App(): JSX.Element {
     markDirty();
   }
 
-  function handleSave(): void {
-    const savedAt = saveAppState(appState);
+  function persistState(stateToSave: AppState): void {
+    const savedAt = saveAppState(stateToSave);
     setLastSavedAt(savedAt);
     setIsDirty(false);
   }
+  function handleSave(): void {
+    persistState(appState);
+  }
 
+  useEffect(() => {
+    if (!isDirty) {
+      return;
+    }
+
+    if (skipNextAutoSaveRef.current) {
+      skipNextAutoSaveRef.current = false;
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      persistState(appState);
+    }, 5000);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [appState, isDirty]);
   function handleDeleteCurrentPeriod(): void {
     if (!selectedPeriod) {
       return;
@@ -294,7 +317,7 @@ export default function App(): JSX.Element {
       <header>
         <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">2주 탄력근무 근태 계산기</h1>
         <p className="mt-1 text-sm text-slate-600">
-          계산은 모두 분(minute) 단위 정수로 처리하며, 화면에는 h:mm 형식으로만 표시합니다.
+          계산은 모두 분(minute) 단위로 처리하기 때문에 HR시스템과 오차가 존재합니다.
         </p>
       </header>
 

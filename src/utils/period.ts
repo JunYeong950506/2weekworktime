@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { DAYS_PER_PERIOD } from '../constants';
 import { DayRecord, Period } from '../types';
 import { recalculateRecords } from './calculations';
+import { isKoreanPublicHoliday } from './holidays';
 
 function sanitizePeriodId(label: string): string {
   const compact = label
@@ -46,18 +47,22 @@ export function ensureUniquePeriodId(
 export function createRecordsFromStartDate(startDate: string): DayRecord[] {
   const baseDate = dayjs(startDate).startOf('day');
 
-  return Array.from({ length: DAYS_PER_PERIOD }, (_, index) => ({
-    date: baseDate.add(index, 'day').format('YYYY-MM-DD'),
-    isHoliday: false,
-    clockIn: '',
-    clockOut: '',
-    workMinutes: null,
-    regularMinutes: null,
-    overtimeMinutes: null,
-    recommendedOtMinutes: null,
-    claimedOtMinutes: 0,
-    earlyLeaveBalanceMinutes: null,
-  }));
+  return Array.from({ length: DAYS_PER_PERIOD }, (_, index) => {
+    const date = baseDate.add(index, 'day').format('YYYY-MM-DD');
+
+    return {
+      date,
+      isHoliday: isKoreanPublicHoliday(date),
+      clockIn: '',
+      clockOut: '',
+      workMinutes: null,
+      regularMinutes: null,
+      overtimeMinutes: null,
+      recommendedOtMinutes: null,
+      claimedOtMinutes: 0,
+      earlyLeaveBalanceMinutes: null,
+    };
+  });
 }
 
 export function copyRecordsWithNewDate(
@@ -71,13 +76,18 @@ export function copyRecordsWithNewDate(
     return newRecords;
   }
 
-  const merged = newRecords.map((record, index) => ({
-    ...record,
-    isHoliday: sourceRecords[index]?.isHoliday ?? false,
-    clockIn: sourceRecords[index]?.clockIn ?? '',
-    clockOut: sourceRecords[index]?.clockOut ?? '',
-    claimedOtMinutes: sourceRecords[index]?.claimedOtMinutes ?? 0,
-  }));
+  const merged = newRecords.map((record, index) => {
+    const source = sourceRecords[index];
+    const shouldKeepSourceHoliday = source?.date === record.date;
+
+    return {
+      ...record,
+      isHoliday: shouldKeepSourceHoliday ? source.isHoliday : record.isHoliday,
+      clockIn: source?.clockIn ?? '',
+      clockOut: source?.clockOut ?? '',
+      claimedOtMinutes: source?.claimedOtMinutes ?? 0,
+    };
+  });
 
   return recalculateRecords(merged).records;
 }
@@ -87,13 +97,18 @@ export function rebaseRecordDates(
   records: DayRecord[],
 ): DayRecord[] {
   const base = createRecordsFromStartDate(startDate);
-  const merged = base.map((record, index) => ({
-    ...record,
-    isHoliday: records[index]?.isHoliday ?? false,
-    clockIn: records[index]?.clockIn ?? '',
-    clockOut: records[index]?.clockOut ?? '',
-    claimedOtMinutes: records[index]?.claimedOtMinutes ?? 0,
-  }));
+  const merged = base.map((record, index) => {
+    const source = records[index];
+    const shouldKeepSourceHoliday = source?.date === record.date;
+
+    return {
+      ...record,
+      isHoliday: shouldKeepSourceHoliday ? source.isHoliday : record.isHoliday,
+      clockIn: source?.clockIn ?? '',
+      clockOut: source?.clockOut ?? '',
+      claimedOtMinutes: source?.claimedOtMinutes ?? 0,
+    };
+  });
 
   return recalculateRecords(merged).records;
 }
