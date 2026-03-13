@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -13,19 +13,8 @@ body {
   min-height: 100vh;
 }
 
-input[type='time']::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-}
-
-/* Keep 2-week table time input digits scaled down with table ratio */
-input[type='time'].table-time-input {
-  font-size: 13px;
-}
-
-input[type='time'].table-time-input::-webkit-datetime-edit,
-input[type='time'].table-time-input::-webkit-datetime-edit-fields-wrapper,
-input[type='time'].table-time-input::-webkit-datetime-edit-hour-field,
-input[type='time'].table-time-input::-webkit-datetime-edit-minute-field {
+/* 2주 기록표 시간 입력 폰트 스케일(12px) */
+.table-time-input {
   font-size: 12px;
   line-height: 1.1;
 }

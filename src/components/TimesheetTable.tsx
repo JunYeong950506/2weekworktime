@@ -41,7 +41,7 @@ function TimeInputCell({
   const hasValue = value.trim() !== '';
 
   return (
-    <div className="relative mx-auto w-[72%] min-w-[95px]">
+    <div className="relative mx-auto w-[80%] min-w-[95px]">
       <input
         type="time"
         step={60}
@@ -50,7 +50,7 @@ function TimeInputCell({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         title="HH:mm (24시간 형식)"
-        className={`h-8 w-full min-w-[150px] rounded-md border border-slate-300 bg-sky-50 py-1 pl-2 text-[11px] table-time-input ${
+        className={`h-8 w-full min-w-[150px] rounded-md border border-slate-300 bg-sky-50 py-1 pl-2 text-xs table-time-input ${
           hasValue ? 'pr-2' : 'pr-2'
         }`}
       />
@@ -61,7 +61,7 @@ function TimeInputCell({
           onClick={() => onChange('')}
           title={clearLabel}
           aria-label={clearLabel}
-          className="absolute right-1.5 top-1/2 inline-flex h-6 -translate-y-1/2 items-center text-[11px] font-semibold text-slate-700 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
+          className="absolute right-7 top-1/2 inline-flex h-5 w-5 -translate-y-1/2 items-center justify-center text-xs font-semibold text-slate-700 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
         >
           <span aria-hidden="true" className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-slate-200 leading-none">&times;</span>
         </button>
@@ -113,8 +113,10 @@ export default function TimesheetTable({
                 <td className="px-1.5 py-1.5 font-medium text-slate-800">
                   <div>{formatDateCell(record.date)}</div>
                   {hasError ? (
-                    <div className="mt-1 text-xs text-rose-600">
-                      {meta.validationErrors.join(' / ')}
+                    <div className="mt-1 space-y-0.5 text-xs text-rose-600">
+                      {meta.validationErrors.map((error, errorIndex) => (
+                        <p key={`${record.date}-error-${errorIndex}`}>{error}</p>
+                      ))}
                     </div>
                   ) : null}
                 </td>
