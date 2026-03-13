@@ -86,6 +86,25 @@ function SectionCalendarIcon({ className }: { className?: string }): JSX.Element
   );
 }
 
+function SectionSummaryIcon({ className }: { className?: string }): JSX.Element {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <line x1="18" y1="20" x2="18" y2="10" />
+      <line x1="12" y1="20" x2="12" y2="4" />
+      <line x1="6" y1="20" x2="6" y2="14" />
+    </svg>
+  );
+}
+
 export default function App(): JSX.Element {
   const initial = useMemo(getInitialState, []);
 
@@ -112,8 +131,6 @@ export default function App(): JSX.Element {
     selectedCalc && todayRecordIndex >= 0
       ? selectedCalc.records[todayRecordIndex]
       : null;
-
-  const todayLabel = useMemo(() => formatDateCell(dayjs().format('YYYY-MM-DD')), []);
   const targetLabel = todayRecord ? formatDateCell(todayRecord.date) : '-';
   const isTodayTarget = todayTarget?.mode === 'today';
 
@@ -404,7 +421,6 @@ export default function App(): JSX.Element {
       />
 
       <TodayQuickEntryCard
-        todayLabel={todayLabel}
         targetLabel={targetLabel}
         isTodayTarget={isTodayTarget}
         record={todayRecord}
@@ -412,7 +428,15 @@ export default function App(): JSX.Element {
         onSetNow={handleSetNowToday}
       />
 
-      <SummaryCards summary={selectedCalc.summary} />
+      <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-soft sm:p-5">
+        <div className="mb-3 flex items-center gap-2 text-slate-900">
+          <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-indigo-100 text-indigo-600">
+            <SectionSummaryIcon className="h-4 w-4" />
+          </span>
+          <h2 className="text-lg font-bold sm:text-xl">2주 근무 누적 요약</h2>
+        </div>
+        <SummaryCards summary={selectedCalc.summary} />
+      </section>
 
       <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-soft sm:p-5">
         <div className="mb-3 flex items-center">

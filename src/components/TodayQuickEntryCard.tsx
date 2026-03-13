@@ -1,9 +1,7 @@
 import { DayRecord, TimeField } from '../types';
 import { formatMinutesAsClock } from '../utils/time';
 
-interface TodayQuickEntryCardProps {
-  todayLabel: string;
-  targetLabel: string;
+interface TodayQuickEntryCardProps {  targetLabel: string;
   isTodayTarget: boolean;
   record: DayRecord | null;
   onPatchRecord: (
@@ -102,9 +100,7 @@ function ResultChip({
   );
 }
 
-export default function TodayQuickEntryCard({
-  todayLabel,
-  targetLabel,
+export default function TodayQuickEntryCard({  targetLabel,
   isTodayTarget,
   record,
   onPatchRecord,
@@ -113,24 +109,21 @@ export default function TodayQuickEntryCard({
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-soft sm:p-5">
       <header>
-        <div className="flex items-center gap-2 text-slate-900">
-          <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-indigo-100 text-indigo-600">
-            <CalendarIcon className="h-4 w-4" />
-          </span>
-          <h2 className="text-xl font-bold sm:text-2xl">오늘 근무 입력</h2>
-        </div>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-2 text-slate-900">
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-indigo-100 text-indigo-600">
+              <CalendarIcon className="h-4 w-4" />
+            </span>
+            <h2 className="text-xl font-bold sm:text-2xl">오늘 근무 입력</h2>
+          </div>
 
-        <div className="mt-2 flex flex-wrap items-center gap-3">
-          <p className="text-4xl font-extrabold leading-none tracking-tight text-slate-900 sm:text-5xl">
-            {todayLabel}
-          </p>
           <span className="inline-flex rounded-lg bg-slate-100 px-3 py-1.5 text-sm font-semibold text-slate-600">
-            현재 편집 대상: {targetLabel}
+            오늘 날짜: {targetLabel}
           </span>
         </div>
 
         {!isTodayTarget ? (
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-2 text-xs text-slate-500">
             오늘 날짜가 현재 구간에 없어 가장 가까운 날짜와 연결했습니다.
           </p>
         ) : null}
