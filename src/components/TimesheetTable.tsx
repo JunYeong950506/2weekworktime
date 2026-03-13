@@ -61,7 +61,7 @@ function TimeInputCell({
           onClick={() => onChange('')}
           title={clearLabel}
           aria-label={clearLabel}
-          className="absolute right-8 top-1/2 inline-flex h-6 -translate-y-1/2 items-center text-[11px] font-semibold text-slate-700 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
+          className="absolute right-2 top-1/2 inline-flex h-6 -translate-y-1/2 items-center text-[11px] font-semibold text-slate-700 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
         >
           <span aria-hidden="true" className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-slate-200 leading-none">&times;</span>
         </button>
