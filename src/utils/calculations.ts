@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+﻿import dayjs from 'dayjs';
 
 import {
   DAILY_REGULAR_MINUTES,
@@ -65,7 +65,7 @@ export function recalculateDayRecord(source: DayRecord): {
   }
 
   if ((hasClockIn && !hasClockOut) || (!hasClockIn && hasClockOut)) {
-    validationErrors.push('출근시간과 퇴근시간을 모두 입력하세요.');
+    validationErrors.push('미입력된 시간이 있습니다.');
   }
 
   let workMinutes: number | null = null;

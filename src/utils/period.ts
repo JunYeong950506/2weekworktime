@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+﻿import dayjs from 'dayjs';
 
 import { DAYS_PER_PERIOD } from '../constants';
 import { DayRecord, Period } from '../types';

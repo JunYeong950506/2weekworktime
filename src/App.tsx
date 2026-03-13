@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import PeriodManager from './components/PeriodManager';
 import SummaryCards from './components/SummaryCards';
 import TimesheetTable from './components/TimesheetTable';
+import TodayQuickEntryCard from './components/TodayQuickEntryCard';
 import { createSampleState } from './data/sampleData';
 import { AppState, CreatePeriodPayload, DayRecord, Period } from './types';
 import { recalculatePeriod, recalculateRecords } from './utils/calculations';
@@ -21,7 +22,8 @@ import {
   loadAppState,
   saveAppState,
 } from './utils/storage';
-import { nowToHHmm } from './utils/time';
+import { formatDateCell, nowToHHmm } from './utils/time';
+import { useTodayRecord } from './hooks/useTodayRecord';
 
 interface InitialState {
   appState: AppState;
@@ -64,6 +66,26 @@ function upsertPeriod(periods: Period[], updated: Period): Period[] {
   return periods.map((period) => (period.id === updated.id ? updated : period));
 }
 
+function SectionCalendarIcon({ className }: { className?: string }): JSX.Element {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  );
+}
+
 export default function App(): JSX.Element {
   const initial = useMemo(getInitialState, []);
 
@@ -82,6 +104,18 @@ export default function App(): JSX.Element {
     () => (selectedPeriod ? recalculatePeriod(selectedPeriod) : null),
     [selectedPeriod],
   );
+
+  const todayTarget = useTodayRecord(selectedCalc?.records ?? []);
+  const todayRecordIndex = todayTarget?.index ?? -1;
+
+  const todayRecord =
+    selectedCalc && todayRecordIndex >= 0
+      ? selectedCalc.records[todayRecordIndex]
+      : null;
+
+  const todayLabel = useMemo(() => formatDateCell(dayjs().format('YYYY-MM-DD')), []);
+  const targetLabel = todayRecord ? formatDateCell(todayRecord.date) : '-';
+  const isTodayTarget = todayTarget?.mode === 'today';
 
   const suggestedLabel = useMemo(
     () => buildDefaultPeriodLabel(selectedPeriod?.startDate ?? emptyStartDate),
@@ -118,7 +152,12 @@ export default function App(): JSX.Element {
 
   function handlePatchRecord(
     index: number,
-    patch: Partial<Pick<DayRecord, 'isHoliday' | 'clockIn' | 'clockOut' | 'dinnerChecked' | 'nonWorkMinutes' | 'claimedOtMinutes'>>,
+    patch: Partial<
+      Pick<
+        DayRecord,
+        'isHoliday' | 'clockIn' | 'clockOut' | 'dinnerChecked' | 'nonWorkMinutes' | 'claimedOtMinutes'
+      >
+    >,
   ): void {
     updateSelectedPeriod((period) => {
       const nextRecords = period.records.map((record, rowIndex) =>
@@ -136,6 +175,29 @@ export default function App(): JSX.Element {
     handlePatchRecord(index, {
       [field]: nowToHHmm(),
     });
+  }
+
+  function handlePatchTodayRecord(
+    patch: Partial<
+      Pick<
+        DayRecord,
+        'clockIn' | 'clockOut' | 'dinnerChecked' | 'nonWorkMinutes' | 'claimedOtMinutes'
+      >
+    >,
+  ): void {
+    if (todayRecordIndex < 0) {
+      return;
+    }
+
+    handlePatchRecord(todayRecordIndex, patch);
+  }
+
+  function handleSetNowToday(field: 'clockIn' | 'clockOut'): void {
+    if (todayRecordIndex < 0) {
+      return;
+    }
+
+    handleSetNow(todayRecordIndex, field);
   }
 
   function handleStartDateChange(startDate: string): void {
@@ -162,7 +224,8 @@ export default function App(): JSX.Element {
       label,
       startDate: payload.startDate,
       records,
-    });
+    });
+
     skipNextAutoSaveRef.current = true;
 
     setAppState((prev) => ({
@@ -195,6 +258,7 @@ export default function App(): JSX.Element {
     setLastSavedAt(savedAt);
     setIsDirty(false);
   }
+
   function handleSave(): void {
     persistState(appState);
   }
@@ -217,13 +281,14 @@ export default function App(): JSX.Element {
       window.clearTimeout(timer);
     };
   }, [appState, isDirty]);
+
   function handleDeleteCurrentPeriod(): void {
     if (!selectedPeriod) {
       return;
     }
 
     const confirmed = window.confirm(
-      `현재 구간 [${selectedPeriod.label}]을 삭제합니다. 이 작업은 되돌릴 수 없습니다. 계속하시겠습니까?`,
+      `현재 구간 [${selectedPeriod.label}]을(를) 삭제합니다. 이 작업은 되돌릴 수 없습니다. 계속하시겠습니까?`,
     );
 
     if (!confirmed) {
@@ -256,7 +321,7 @@ export default function App(): JSX.Element {
         <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-soft">
           <h1 className="text-2xl font-bold text-slate-900">2주 탄력근무 근태 계산기</h1>
           <p className="mt-2 text-sm text-slate-600">
-            첫 화면에서는 2주 시작일만 설정하면 됩니다. 시작일을 기준으로 14일이 자동 생성됩니다.
+            첫 화면에서 2주 시작일만 설정하면 됩니다. 시작일을 기준으로 14일이 자동 생성됩니다.
           </p>
 
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-end">
@@ -317,7 +382,7 @@ export default function App(): JSX.Element {
       <header>
         <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">2주 탄력근무 근태 계산기</h1>
         <p className="mt-1 text-sm text-slate-600">
-          계산은 모두 분(minute) 단위로 처리하기 때문에 HR시스템과 오차가 존재합니다.
+          계산은 모두 분(minute) 단위로 처리되어 오차를 줄입니다.
         </p>
       </header>
 
@@ -338,14 +403,33 @@ export default function App(): JSX.Element {
         onResetAllData={handleResetAllData}
       />
 
+      <TodayQuickEntryCard
+        todayLabel={todayLabel}
+        targetLabel={targetLabel}
+        isTodayTarget={isTodayTarget}
+        record={todayRecord}
+        onPatchRecord={handlePatchTodayRecord}
+        onSetNow={handleSetNowToday}
+      />
+
       <SummaryCards summary={selectedCalc.summary} />
 
-      <TimesheetTable
-        records={selectedCalc.records}
-        rowMeta={selectedCalc.rowMeta}
-        onPatchRecord={handlePatchRecord}
-        onSetNow={handleSetNow}
-      />
+      <section className="rounded-3xl border border-slate-200 bg-white p-4 shadow-soft sm:p-5">
+        <div className="mb-3 flex items-center">
+          <div className="flex items-center gap-2 text-slate-900">
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-md bg-indigo-100 text-indigo-600">
+              <SectionCalendarIcon className="h-4 w-4" />
+            </span>
+            <h2 className="text-xl font-bold sm:text-2xl">최근 2주 근무기록</h2>
+          </div>
+        </div>
+
+        <TimesheetTable
+          records={selectedCalc.records}
+          rowMeta={selectedCalc.rowMeta}
+          onPatchRecord={handlePatchRecord}
+        />
+      </section>
     </main>
   );
 }
