@@ -65,7 +65,7 @@ function TimeInputWithButton({
           value={value}
           onChange={(event) => onChange(event.target.value)}
           title="HH:mm (24시간 형식)"
-          className="h-11 w-full rounded-xl border border-slate-300 bg-slate-50 px-3 text-base text-slate-800"
+          className="h-11 w-auto rounded-xl border border-slate-300 bg-slate-50 px-3 text-base text-slate-800"
         />
         <button
           type="button"

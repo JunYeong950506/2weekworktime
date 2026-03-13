@@ -50,7 +50,7 @@ function TimeInputCell({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         title="HH:mm (24시간 형식)"
-        className={`h-8 w-full min-w-[135px] rounded-md border border-slate-300 bg-sky-50 py-1 pl-2 text-[11px] table-time-input ${
+        className={`h-8 w-full min-w-[150px] rounded-md border border-slate-300 bg-sky-50 py-1 pl-2 text-[11px] table-time-input ${
           hasValue ? 'pr-2' : 'pr-2'
         }`}
       />
