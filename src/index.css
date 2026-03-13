@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -15,4 +15,17 @@ body {
 
 input[type='time']::-webkit-calendar-picker-indicator {
   cursor: pointer;
+}
+
+/* Keep 2-week table time input digits scaled down with table ratio */
+input[type='time'].table-time-input {
+  font-size: 11px;
+}
+
+input[type='time'].table-time-input::-webkit-datetime-edit,
+input[type='time'].table-time-input::-webkit-datetime-edit-fields-wrapper,
+input[type='time'].table-time-input::-webkit-datetime-edit-hour-field,
+input[type='time'].table-time-input::-webkit-datetime-edit-minute-field {
+  font-size: 11px;
+  line-height: 1.1;
 }

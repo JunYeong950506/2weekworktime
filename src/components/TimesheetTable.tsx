@@ -41,7 +41,7 @@ function TimeInputCell({
   const hasValue = value.trim() !== '';
 
   return (
-    <div className="relative">
+    <div className="relative mx-auto w-[72%] min-w-[95px]">
       <input
         type="time"
         step={60}
@@ -50,8 +50,8 @@ function TimeInputCell({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         title="HH:mm (24시간 형식)"
-        className={`h-9 w-full min-w-[100px] rounded-md border border-slate-300 bg-sky-50 py-1 pl-2 text-sm ${
-          hasValue ? 'pr-16' : 'pr-2'
+        className={`h-8 w-full min-w-[135px] rounded-md border border-slate-300 bg-sky-50 py-1 pl-2 text-[11px] table-time-input ${
+          hasValue ? 'pr-2' : 'pr-2'
         }`}
       />
 
@@ -61,9 +61,9 @@ function TimeInputCell({
           onClick={() => onChange('')}
           title={clearLabel}
           aria-label={clearLabel}
-          className="absolute right-8 top-1/2 inline-flex h-6 -translate-y-1/2 items-center text-sm font-semibold text-slate-700 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
+          className="absolute right-8 top-1/2 inline-flex h-6 -translate-y-1/2 items-center text-[11px] font-semibold text-slate-700 transition-colors hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
         >
-          <span aria-hidden="true" className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-slate-200 leading-none">×</span>
+          <span aria-hidden="true" className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-slate-200 leading-none">&times;</span>
         </button>
       ) : null}
     </div>
@@ -77,21 +77,21 @@ export default function TimesheetTable({
 }: TimesheetTableProps): JSX.Element {
   return (
     <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-      <table className="w-full min-w-[1460px] border-collapse text-sm">
+      <table className="w-full min-w-[1300px] border-collapse text-xs">
         <thead>
           <tr className="bg-slate-800 text-white">
-            <th className="px-2 py-2">날짜</th>
-            <th className="px-2 py-2">공휴일</th>
-            <th className="px-2 py-2">출근시간</th>
-            <th className="px-2 py-2">퇴근시간</th>
-            <th className="px-2 py-2">석식</th>
-            <th className="px-2 py-2">비업무시간(분)</th>
-            <th className="px-2 py-2">근무시간</th>
-            <th className="px-2 py-2">정규 업무시간</th>
-            <th className="px-2 py-2">추가 근무시간</th>
-            <th className="px-2 py-2">권장 야근결재</th>
-            <th className="px-2 py-2">실제 야근결재(분)</th>
-            <th className="px-2 py-2">조기퇴근 적립/부족</th>
+            <th className="px-1.5 py-1.5">날짜</th>
+            <th className="px-1.5 py-1.5">공휴일</th>
+            <th className="px-1.5 py-1.5">출근시간</th>
+            <th className="px-1.5 py-1.5">퇴근시간</th>
+            <th className="px-1.5 py-1.5">석식</th>
+            <th className="px-1.5 py-1.5">비업무시간(분)</th>
+            <th className="px-1.5 py-1.5">근무시간</th>
+            <th className="px-1.5 py-1.5">정규 업무시간</th>
+            <th className="px-1.5 py-1.5">추가 근무시간</th>
+            <th className="px-1.5 py-1.5">권장 야근결재</th>
+            <th className="px-1.5 py-1.5">실제 야근결재(분)</th>
+            <th className="px-1.5 py-1.5">조기퇴근 적립/부족</th>
           </tr>
         </thead>
         <tbody>
@@ -110,7 +110,7 @@ export default function TimesheetTable({
                       : 'bg-slate-50/60'
                 } border-b border-slate-200 align-top`}
               >
-                <td className="px-2 py-2 font-medium text-slate-800">
+                <td className="px-1.5 py-1.5 font-medium text-slate-800">
                   <div>{formatDateCell(record.date)}</div>
                   {hasError ? (
                     <div className="mt-1 text-xs text-rose-600">
@@ -119,7 +119,7 @@ export default function TimesheetTable({
                   ) : null}
                 </td>
 
-                <td className="px-2 py-2 text-center">
+                <td className="px-1.5 py-1.5 text-center">
                   <input
                     type="checkbox"
                     checked={record.isHoliday}
@@ -130,7 +130,7 @@ export default function TimesheetTable({
                   />
                 </td>
 
-                <td className="px-2 py-2">
+                <td className="px-1.5 py-1.5">
                   <TimeInputCell
                     value={record.clockIn}
                     min="06:00"
@@ -140,7 +140,7 @@ export default function TimesheetTable({
                   />
                 </td>
 
-                <td className="px-2 py-2">
+                <td className="px-1.5 py-1.5">
                   <TimeInputCell
                     value={record.clockOut}
                     min="00:00"
@@ -150,7 +150,7 @@ export default function TimesheetTable({
                   />
                 </td>
 
-                <td className="px-2 py-2 text-center">
+                <td className="px-1.5 py-1.5 text-center">
                   <input
                     type="checkbox"
                     checked={record.dinnerChecked}
@@ -161,7 +161,7 @@ export default function TimesheetTable({
                   />
                 </td>
 
-                <td className="px-2 py-2 text-center">
+                <td className="px-1.5 py-1.5 text-center">
                   <input
                     type="number"
                     min={0}
@@ -177,27 +177,27 @@ export default function TimesheetTable({
                         nonWorkMinutes: Number(event.target.value || 0),
                       })
                     }
-                    className="w-28 rounded-md border border-slate-300 bg-sky-50 px-2 py-1 text-right"
+                    className="w-20 rounded-md border border-slate-300 bg-sky-50 px-2 py-1 text-right text-[11px]"
                   />
                 </td>
 
-                <td className="px-2 py-2 text-center font-semibold text-slate-700">
+                <td className="px-1.5 py-1.5 text-center font-semibold text-slate-700">
                   {formatMinutesAsClock(record.workMinutes)}
                 </td>
 
-                <td className="bg-slate-100 px-2 py-2 text-center font-semibold text-slate-700">
+                <td className="bg-slate-100 px-1.5 py-1.5 text-center font-semibold text-slate-700">
                   {formatMinutesAsClock(record.regularMinutes)}
                 </td>
 
-                <td className="bg-slate-100 px-2 py-2 text-center font-semibold text-slate-700">
+                <td className="bg-slate-100 px-1.5 py-1.5 text-center font-semibold text-slate-700">
                   {formatMinutesAsClock(record.overtimeMinutes)}
                 </td>
 
-                <td className="bg-slate-100 px-2 py-2 text-center font-semibold text-slate-700">
+                <td className="bg-slate-100 px-1.5 py-1.5 text-center font-semibold text-slate-700">
                   {formatMinutesAsClock(record.recommendedOtMinutes)}
                 </td>
 
-                <td className="px-2 py-2 text-center">
+                <td className="px-1.5 py-1.5 text-center">
                   <input
                     type="number"
                     min={0}
@@ -213,11 +213,11 @@ export default function TimesheetTable({
                         claimedOtMinutes: Number(event.target.value || 0),
                       })
                     }
-                    className="w-24 rounded-md border border-slate-300 bg-sky-50 px-2 py-1 text-right"
+                    className="w-20 rounded-md border border-slate-300 bg-sky-50 px-2 py-1 text-right text-[11px]"
                   />
                 </td>
 
-                <td className="bg-slate-100 px-2 py-2 text-center font-semibold text-slate-700">
+                <td className="bg-slate-100 px-1.5 py-1.5 text-center font-semibold text-slate-700">
                   {formatSignedMinutesAsClock(record.earlyLeaveBalanceMinutes)}
                 </td>
               </tr>
