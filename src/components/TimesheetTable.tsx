@@ -41,7 +41,7 @@ function TimeInputCell({
   const hasValue = value.trim() !== '';
 
   return (
-    <div className="relative mx-auto w-[80%] min-w-[90px]">
+    <div className="relative mx-auto w-[80%] min-w-[50px]">
       <input
         type="time"
         step={60}
