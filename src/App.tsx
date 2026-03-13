@@ -292,7 +292,7 @@ export default function App(): JSX.Element {
 
     const timer = window.setTimeout(() => {
       persistState(appState);
-    }, 5000);
+    }, 3000);
 
     return () => {
       window.clearTimeout(timer);
@@ -397,9 +397,11 @@ export default function App(): JSX.Element {
   return (
     <main className="mx-auto flex max-w-[1400px] flex-col gap-4 px-3 py-4 sm:px-6 sm:py-6">
       <header>
-        <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">2주 탄력근무 근태 계산기</h1>
+        <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">2주 자율출퇴근 계산기</h1>
         <p className="mt-1 text-sm text-slate-600">
-          계산은 모두 분(minute) 단위로 처리되어 오차를 줄입니다.
+          계산은 분(minute) 단위로 HR시스템과 오차가 발생할 수 있습니다.
+          <br />
+          임시 공휴일은 직접 수정해주세요.
         </p>
       </header>
 

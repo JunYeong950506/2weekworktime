@@ -112,9 +112,9 @@ export default function PeriodManager({
               </button>
             </div>
             <p className="mt-2 text-xs text-slate-500">
-              저장은 현재 입력 내용을 브라우저에 보관하여 데이터를 유지합니다.
+              데이터는 브라우저 로컬 캐시로 저장됩니다.
               <br />
-              입력 변경 후 5초가 지나면 자동으로 같은 저장이 실행됩니다.
+              데이터 변경 시 3초 후에 자동 저장됩니다.
             </p>
           </div>
         </div>
